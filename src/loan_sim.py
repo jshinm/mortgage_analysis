@@ -1,4 +1,5 @@
 # Amortized Loan Simulator
+import pandas as pd
 
 def calculate_interest(P,r):
     '''Calculate simple monthly interest payment
