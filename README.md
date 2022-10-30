@@ -5,6 +5,7 @@ Understand the APR calculation and find the most cost effective additional month
 
 - Cap Rate
     - Cap Rate = (Net Operating Income)/(Current Fair Market Value)
+    - Ref: [Rf1](https://www.nolo.com/legal-encyclopedia/is-that-residential-real-estate-investment-property-worth-it.html)
 
 
 ## Examples
