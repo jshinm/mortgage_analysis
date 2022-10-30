@@ -7,6 +7,8 @@ Understand the APR calculation and find the most cost effective additional month
     - Cap Rate = (Net Operating Income)/(Current Fair Market Value)
     - Ref: [Rf1](https://www.nolo.com/legal-encyclopedia/is-that-residential-real-estate-investment-property-worth-it.html)
 
+- 50% Rule
+    - The 50% rule in real estate says that investors should expect a property’s operating expenses to be roughly 50% of its gross income.
 
 ## Examples
 There are 2 examples simulating the following amortization schedule
