@@ -9,6 +9,7 @@ Understand the APR calculation and find the most cost effective additional month
 
 - 50% Rule
     - The 50% rule in real estate says that investors should expect a property’s operating expenses to be roughly 50% of its gross income.
+    - Ref: [Rf1](https://smartasset.com/investing/50-rule-real-estate)
 
 ## Examples
 There are 2 examples simulating the following amortization schedule
