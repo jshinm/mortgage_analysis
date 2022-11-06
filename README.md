@@ -15,6 +15,10 @@ Understand the APR calculation and find the most cost effective additional month
     - The cash on cash return is the cash flow after ALL expenses (including debt service) divided by the total cash invested.
     - Ref: [Rf1](https://www.biggerpockets.com/blog/amazing-apartment-deals)
 
+- Debt Coverage Ratio
+    - This is a ratio most often used by banks to determine the risk level of the building if they were to grant a loan to you.
+    - Ref: [Rf1](https://www.biggerpockets.com/blog/amazing-apartment-deals)
+
 ## Examples
 There are 2 examples simulating the following amortization schedule
 1. Personal Loan Simulation [[Link](/examples/loan_payment_schedule_personal_loan.ipynb)]
