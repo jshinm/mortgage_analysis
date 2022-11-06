@@ -19,6 +19,10 @@ Understand the APR calculation and find the most cost effective additional month
     - This is a ratio most often used by banks to determine the risk level of the building if they were to grant a loan to you.
     - Ref: [Rf1](https://www.biggerpockets.com/blog/amazing-apartment-deals)
 
+## ML projects
+- Property Valuation Assessment
+    - [Rf1](https://pub.towardsai.net/how-to-tell-if-properties-are-under-overvalued-like-a-data-scientist-311a31629186)
+
 ## Examples
 There are 2 examples simulating the following amortization schedule
 1. Personal Loan Simulation [[Link](/examples/loan_payment_schedule_personal_loan.ipynb)]
