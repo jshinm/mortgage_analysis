@@ -1,6 +1,8 @@
 # Amortized Loan Simulator
 import pandas as pd
 
+pd.set_option('display.max_rows', None)
+
 def calculate_interest(P,r):
     '''Calculate simple monthly interest payment
     '''
@@ -41,25 +43,31 @@ def generate_amortization_table(P,r,n,M=None,additive=0,return_range=False):
     M (float, optional): total payment amount
     additive (float, optional): additional monthly principal payment
     '''
-    cols = ['Beginning Balance', 'Total Pmt', 'Interest', 'Principal', 'Ending Balance', 'Total Interest']
+    cols = ['Beginning Balance', 'Total Pmt', 'Interest', 
+            'Principal', 'Ending Balance', 'Total Principal', 
+            'Total Interest', 'Percent Paid']
     df = pd.DataFrame(columns=cols)
     if not M:
         M = calculate_snapshot_monthly(P=P, r=r, n=n)+additive #monthly total (this is constant)
-    TI = 0
+    TI = 0 #total interest
+    PI = 0 #total principal
+    P_initial = P #initial principal balance
     
     for i in range(n):
         I = calculate_interest(P=P, r=r)
-        TI += I
         P_i = P #initial balance
         pr = M-I #principal
         P -= pr #ending balance
+        TI += I #total interest
+        PI += pr #total principal
+        perc_paid = (PI / P_initial)*100 #percent principal paid
 
         if P < 0: 
             M = P_i
             pr = M
             P = 0
 
-        tmp = [P_i, M, I, pr, P, TI]
+        tmp = [P_i, M, I, pr, P, PI, TI, perc_paid]
         tmp = [round(j,2) for j in tmp]
         
         df = pd.concat([df, pd.DataFrame(tmp, index=cols).T])
