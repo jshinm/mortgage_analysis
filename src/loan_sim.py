@@ -2,19 +2,19 @@
 import warnings
 import pandas as pd
 import matplotlib.pyplot as plt
+from kneed import KneeLocator
 
 warnings.filterwarnings("ignore")
+pd.set_option("display.max_rows", None)
 
 
 class LoanCalc:
-    def __init__(self, P, r, n, M=None, additive=0, return_range=False, max_row=None):
+    def __init__(self, P, r, n, M=None, additive=0, return_range=False):
         self.P = P
         self.r = r
         self.n = n
         self.M = M
         self.additive = additive
-
-        pd.set_option("display.max_rows", max_row)
 
     @staticmethod
     def _calculate_interest(P, r):
@@ -38,10 +38,17 @@ class LoanCalc:
 
         return A
 
-    def find_optimal_schedule(self, search_range=None, M=None, draw_plot=True):
+    def find_optimal_schedule(
+        self, search_range=None, M=None, draw_plot=True, max_rows=None
+    ):
         """Creates table to find the optimal overpayment schedule"""
 
-        cols = ["Additive Down", "Total Payment Schedule", "Total Interest Paid"]
+        cols = [
+            "Additive Down",
+            "Total Payment Schedule",
+            "Total Interest Paid",
+            "Percent Reduced",
+        ]
         df = pd.DataFrame(columns=cols)
 
         if search_range is None:
@@ -51,25 +58,47 @@ class LoanCalc:
 
         for rng in search_range:
             total_schedule, total_interest = self.generate_amortization_table(
-                P=self.P, r=self.r, n=self.n, M=self.M, additive=rng, return_range=True
+                additive=rng, return_range=True
             )
 
+            perc_reduced = ((self.n - total_schedule) / self.n) * 100
+
             df = pd.concat(
-                [df, pd.DataFrame([rng, total_schedule, total_interest], index=cols).T]
+                [
+                    df,
+                    pd.DataFrame(
+                        [rng, total_schedule, total_interest, perc_reduced], index=cols
+                    ).T,
+                ]
             )
 
         df.reset_index(drop=True, inplace=True)
 
+        dff = df[["Additive Down", "Percent Reduced"]].to_numpy()
+        # param: curve
+        # concave detects knees; convex detects elbow
+        kl = KneeLocator(
+            x=dff[:, 0].tolist(),
+            y=dff[:, 1].tolist(),
+            S=1,
+            curve="concave",
+            direction="increasing",
+        )
+
         # plot schedule
         if draw_plot:
-            fig, ax = plt.subplots(1, 1, figsize=(6 * 3, 6))
-            df.plot(x="Additive Down", y="Total Payment Schedule", kind="bar", ax=ax)
+            fig, axs = plt.subplots(2, 1, figsize=(6 * 3, 6 * 2))
+            df.plot(
+                x="Additive Down", y="Total Payment Schedule", kind="bar", ax=axs[0]
+            )
+            # ax2 = ax.twinx()
+            # axs[1].tick_params(axis="y", labelcolor="red")
+            df.plot(x="Additive Down", y="Percent Reduced", kind="line", ax=axs[1])
+            axs[1].vlines(kl.knee, 0, 100, linestyles="dashed", colors="red")
 
-        return df
+        return df[:max_rows]
 
-    def generate_amortization_table(
-        self, P, r, n, M=None, additive=0, return_range=False
-    ):
+    def generate_amortization_table(self, additive=0, return_range=False):
         """Generate complete amortization schedule
 
         P (int): initial principal
@@ -88,6 +117,11 @@ class LoanCalc:
             "Total Interest",
             "Percent Paid",
         ]
+
+        P = self.P
+        r = self.r
+        n = self.n
+        M = self.M
 
         df = pd.DataFrame(columns=cols)
         if not M:
