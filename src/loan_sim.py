@@ -9,14 +9,14 @@ pd.set_option("display.max_rows", None)
 
 
 class LoanCalc:
-    def __init__(self, P, r, n, O, T=None):
+    def __init__(self, P, r, n, O=0):
         """Initialize Loan Calculator with constant vars
 
         Args:
             P (int): initial principal
             r (float): interest per period (e.g., APR/12)
             n (int): total number of payments
-            O (int): other monthly expenses
+            O (int, optional): other monthly expenses. Defaults to 0
         """
         self.P = P
         self.r = r
