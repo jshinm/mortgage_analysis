@@ -9,12 +9,19 @@ pd.set_option("display.max_rows", None)
 
 
 class LoanCalc:
-    def __init__(self, P, r, n, M=None, additive=0, return_range=False):
+    def __init__(self, P, r, n, O, T=None):
+        """Initialize Loan Calculator with constant vars
+
+        Args:
+            P (int): initial principal
+            r (float): interest per period (e.g., APR/12)
+            n (int): total number of payments
+            O (int): other monthly expenses
+        """
         self.P = P
         self.r = r
         self.n = n
-        self.M = M
-        self.additive = additive
+        self.O = O
 
     @staticmethod
     def _calculate_interest(P, r):
@@ -29,10 +36,6 @@ class LoanCalc:
         r (float): interest per period (e.g., APR/12)
         n (int): total number of payments
         """
-        # P = self.P
-        # r = self.r
-        # n = self.n
-
         r /= 12  # interest per month
         A = P / ((1 + r) ** n - 1) * (r * (1 + r) ** n)
 
@@ -101,17 +104,20 @@ class LoanCalc:
     def generate_amortization_table(self, additive=0, return_range=False):
         """Generate complete amortization schedule
 
-        P (int): initial principal
-        r (float): interest per period (e.g., APR/12)
-        n (int): total number of payments
-        M (float, optional): total payment amount
-        additive (float, optional): additional monthly principal payment
+        Args:
+            additive (int, optional): additional monthly principal payment. Defaults to 0.
+            return_range (bool, optional): returns # months of payment and total interests. Defaults to False.
+
+        Returns:
+            (int, int): # months of payment, total interests
         """
+
         cols = [
             "Beginning Balance",
-            "Total Pmt",
+            "Total Monthly",
             "Interest",
             "Principal",
+            "Other",
             "Ending Balance",
             "Total Principal",
             "Total Interest",
@@ -121,13 +127,13 @@ class LoanCalc:
         P = self.P
         r = self.r
         n = self.n
-        M = self.M
+        O = self.O
 
         df = pd.DataFrame(columns=cols)
-        if not M:
-            M = (
-                self._calculate_snapshot_monthly(P=P, r=r, n=n) + additive
-            )  # monthly total (this is constant)
+
+        # constant monthly total
+        M = self._calculate_snapshot_monthly(P=P, r=r, n=n) + additive + O
+
         TI = 0  # total interest
         PI = 0  # total principal
         P_initial = P  # initial principal balance
@@ -135,7 +141,7 @@ class LoanCalc:
         for i in range(n):
             I = self._calculate_interest(P=P, r=r)
             P_i = P  # initial balance
-            pr = M - I  # principal
+            pr = M - I - O  # principal
             P -= pr  # ending balance
             TI += I  # total interest
             PI += pr  # total principal
@@ -146,7 +152,7 @@ class LoanCalc:
                 pr = M
                 P = 0
 
-            tmp = [P_i, M, I, pr, P, PI, TI, perc_paid]
+            tmp = [P_i, M, I, pr, O, P, PI, TI, perc_paid]
             tmp = [round(j, 2) for j in tmp]
 
             df = pd.concat([df, pd.DataFrame(tmp, index=cols).T])
@@ -156,6 +162,7 @@ class LoanCalc:
 
         df = df.reset_index(drop=True)
         df.index += 1
+
         if return_range:
             return max(df.index), TI
         else:
