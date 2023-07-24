@@ -88,6 +88,8 @@ class LoanCalc:
             direction="increasing",
         )
 
+        self.optimal_knee = kl.knee
+
         # plot schedule
         if draw_plot:
             fig, axs = plt.subplots(2, 1, figsize=(6 * 3, 6 * 2))
@@ -101,7 +103,9 @@ class LoanCalc:
 
         return df[:max_rows]
 
-    def generate_amortization_table(self, additive=0, return_range=False):
+    def generate_amortization_table(
+        self, additive=0, return_range=False, max_rows=None
+    ):
         """Generate complete amortization schedule
 
         Args:
@@ -166,4 +170,4 @@ class LoanCalc:
         if return_range:
             return max(df.index), TI
         else:
-            return df
+            return df[:max_rows]
