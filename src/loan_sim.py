@@ -155,6 +155,7 @@ class LoanCalc:
                 M = P_i
                 pr = M
                 P = 0
+                perc_paid = 100
 
             tmp = [P_i, M, I, pr, O, P, PI, TI, perc_paid]
             tmp = [round(j, 2) for j in tmp]
